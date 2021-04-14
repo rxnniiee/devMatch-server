@@ -1,0 +1,28 @@
+# system files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+*.swp
+*.swo
+
+# logs & db
+*.log
+*.sql
+*.sqlite
+
+# environment variables
+.env*
+!.env.sample
+
+# dependency, extensions & other
+node_modules/
+.module-cache
+.idea
+.vscode
+*.iml
+*.sublime-project
+*.sublime-workspace
+.eslintcache
+.npm
+/.pnp
+.pnp.js
