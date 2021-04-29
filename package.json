@@ -16,6 +16,7 @@
   "contributors": [],
   "private": true,
   "dependencies": {
+    "dedent": "^0.7.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "mysql2": "^2.2.5",
