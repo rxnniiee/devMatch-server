@@ -52,7 +52,7 @@ module.exports = {
         password CHAR(60) NOT NULL,
         first_name VARCHAR(64) NOT NULL,
         last_name VARCHAR(64) NOT NULL,
-        preferred_employment_type TINYINT(3),
+        preferred_employment_type TINYINT(3) NOT NULL,
         city VARCHAR(64) NOT NULL,
         created_at INT(11) UNSIGNED NOT NULL,
         FOREIGN KEY (city) REFERENCES city(name)
