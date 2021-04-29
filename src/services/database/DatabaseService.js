@@ -1,6 +1,7 @@
 // modules
 const mysql = require('mysql2/promise')
 const EventEmitter = require('events')
+const DB_QUERIES = require('./queries')
 
 class DatabaseService extends EventEmitter {
   connection = null
@@ -15,6 +16,8 @@ class DatabaseService extends EventEmitter {
       password: process.env.DB_PASS,
     }
     this.connect()
+
+    this.once('connected', this.setup)
   }
 
   /**
@@ -28,7 +31,7 @@ class DatabaseService extends EventEmitter {
     }
     await mysql
       .createConnection(this.config)
-      .then((connection) => {
+      .then(async (connection) => {
         this.connection = connection
         this.emit('connected')
       })
@@ -64,8 +67,24 @@ class DatabaseService extends EventEmitter {
    * Create application tables
    * @returns {Promise<void>} promise
    */
-   async setup() {
-
+  async setup() {
+    for (const key in DB_QUERIES) {
+      const createTableQuery = DB_QUERIES[key]?.create_table
+      if (!createTableQuery) {
+        continue
+      }
+      await this.query(createTableQuery)
+        .then((result) => {
+          if (result.warningStatus) {
+            return // no warnings, table already created
+          }
+          console.info(`[Database] Created table '${key}'`)
+        })
+        .catch((err) => {
+          console.error(`[Database] Error creating table '${key}'`)
+          console.error(err)
+        })
+    }
   }
 }
 
