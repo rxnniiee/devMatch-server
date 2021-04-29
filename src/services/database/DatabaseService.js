@@ -17,6 +17,11 @@ class DatabaseService extends EventEmitter {
     this.connect()
   }
 
+  /**
+   * Attempts to connect to the database,
+   * will emit 'connected' or 'error'
+   * @returns {Promise<void>}
+   */
   async connect() {
     if (this.connection) {
       return // we already have a connection, don't bother
@@ -33,16 +38,34 @@ class DatabaseService extends EventEmitter {
       })
   }
 
+  /**
+   * Query the database
+   * @param {String} query query string
+   * @param {Array<String|Number>} parameters query parameters
+   * @returns {Promise<Array>} result
+   */
   async query(query, parameters) {
     const [result] = await this.connection.query(query, parameters)
     return result
   }
 
+  /**
+   * Destroys the connection
+   * @returns {Promise<void>} promise
+   */
   async destroy() {
     if (!this.connection) {
       return
     }
     await this.connection.destroy()
+  }
+
+  /**
+   * Create application tables
+   * @returns {Promise<void>} promise
+   */
+   async setup() {
+
   }
 }
 
