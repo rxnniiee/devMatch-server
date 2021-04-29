@@ -8,6 +8,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 // import routes
+const helloRoute = require('./routes/hello')
 const authRoute = require('./routes/auth')
 
 // the main function of this server
@@ -19,6 +20,7 @@ async function init() {
   // todo: make sure database is reachable, then set it up
 
   // route middlewares
+  app.use('/', helloRoute)
   app.use('/auth', authRoute)
 
   // make express listen on port defined in the environment variable 'EXPRESS_PORT'
