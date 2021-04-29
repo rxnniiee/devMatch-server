@@ -1,5 +1,6 @@
 // modules
 const express = require('express')
+const Database = require('./services/database/DatabaseService')
 
 // variables & setup
 const app = express()
@@ -13,12 +14,26 @@ async function init() {
   console.info('[System] -- Starting --')
 
   // todo: make sure database is reachable, then set it up
+  Database.query('SHOW DATABASES').then(JSON.stringify).then(console.log)
 
   // make express listen on port defined in the environment variable 'EXPRESS_PORT'
-  app.listen(process.env.EXPRESS_PORT, () => console.info(`[System] Running @ http://localhost:${process.env.EXPRESS_PORT}`))
+  app.listen(process.env.EXPRESS_PORT, () =>
+    console.info(
+      `[System] Running @ http://localhost:${process.env.EXPRESS_PORT}`
+    )
+  )
 }
 
-init() // invoke the main function to start everything up
+// init() // invoke the main function to start everything up
+Database.once('connected', init)
+
+// handle database errors
+Database.on('error', (err) => {
+  console.error(
+    `[Database] Error: code: '${err.code}' errno: ${err.errno} // (${Database.config.host}:${Database.config.port}/${Database.config.database})`
+  )
+  gracefulStop(`Unable to connect to the database! [${err.code}]`)
+})
 
 // might get moved to a separate module later
 async function gracefulStop(reason) {
@@ -32,6 +47,6 @@ async function gracefulStop(reason) {
 }
 
 // handle interrupts to stop the server gracefully
-process.on('SIGINT', () => gracefulStop('SIGINT'))    // CTRL + C
+process.on('SIGINT', () => gracefulStop('SIGINT')) // CTRL + C
 process.on('SIGTERM', () => gracefulStop('SIGTERM'))
-process.on('SIGUSR2', () => gracefulStop('SIGUSR2'))  // nodemon's default restart signal
+process.on('SIGUSR2', () => gracefulStop('SIGUSR2')) // nodemon's default restart signal
