@@ -18,7 +18,7 @@ module.exports = {
      * @param name
      */
     delete: `DELETE FROM country WHERE name=? LIMIT 1`,
-    get_all: `SELECT * FROM country`
+    get_all: `SELECT * FROM country`,
   },
   // ? Table - city
   city: {
@@ -40,7 +40,7 @@ module.exports = {
      * @param name
      */
     delete: `DELETE FROM city WHERE name=? LIMIT 1`,
-    get_all: `SELECT * FROM city`
+    get_all: `SELECT * FROM city`,
   },
   // ? Table - employee
   employee: {
@@ -74,6 +74,69 @@ module.exports = {
      * @param uid CHAR(16) - nanoid string
      */
     delete: `DELETE FROM employee WHERE uid = ? LIMIT 1`,
-    get_all: `SELECT uid, first_name, last_name, city, preferred_employment_type, created_at FROM employee`
+    get_all: `SELECT uid, first_name, last_name, city, preferred_employment_type, created_at FROM employee`,
   },
+  // ? table - employer
+  employer: {
+    create_table: dedent(
+      `CREATE TABLE IF NOT EXISTS employer (
+        id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        uid CHAR(16) NOT NULL UNIQUE,
+        email VARCHAR(320) NOT NULL,
+        password CHAR(60) NOT NULL,
+        company_name VARCHAR(64) NOT NULL,
+        company_logo_path VARCHAR(128),
+        created_at INT(11) UNSIGNED NOT NULL
+      )`
+    ),
+    delete_table: `DROP TABLE employer`,
+  },
+  // ? table - job listing
+  job_listing: {
+    create_table: dedent(
+      `CREATE TABLE IF NOT EXISTS job_listing (
+        id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        employer CHAR(16) NOT NULL,
+        title VARCHAR(64) NOT NULL,
+        body TEXT NOT NULL,
+        expires_at INT(11) UNSIGNED NOT NULL,
+        created_at INT(11) UNSIGNED NOT NULL,
+        FOREIGN KEY (employer) REFERENCES employer(uid)
+      )`
+    ),
+    delete_table: `DROP TABLE job_listing`,
+  },
+  // ? table - technology
+  technology: {
+    create_table: dedent(
+      `CREATE TABLE IF NOT EXISTS technology (
+        id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(64) NOT NULL UNIQUE
+      )`
+    ),
+    delete_table: `DROP TABLE technology`,
+  },
+  // ? table - job_listing_technology
+  job_listing_technology: {
+    create_table: dedent(
+      `CREATE TABLE IF NOT EXISTS job_listing_technology (
+        id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        job_listing INT(11) UNSIGNED NOT NULL,
+        technology VARCHAR(64) NOT NULL,
+        FOREIGN KEY (job_listing) REFERENCES job_listing(id),
+        FOREIGN KEY (technology) REFERENCES technology(name)
+      )`
+    ),
+    delete_table: `DROP TABLE job_listing_technology`,
+  },
+  // ? table - match/swipe
+  // swipe: {
+  //   create_table: dedent(
+  //     `CREATE TABLE IF NOT EXISTS swipe (
+  //       id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+  //     )`
+  //   ),
+  // },
+  // ? table - message
 }
