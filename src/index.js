@@ -49,7 +49,8 @@ async function gracefulStop(reason) {
   console.info('[System] -- Stopping --')
   reason && console.info(`[System] Reason: ${reason}`)
 
-  // todo: await pool end
+  // close the connection
+  await Database.destroy()
 
   console.info('[System] Bye!')
   process.exit()
