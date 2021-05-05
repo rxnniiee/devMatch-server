@@ -34,7 +34,7 @@ async function init() {
 }
 
 // init() // invoke the main function to start everything up
-Database.once('connected', init)
+Database.once('ready', init)
 
 // handle database errors
 Database.on('error', (err) => {

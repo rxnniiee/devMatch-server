@@ -68,6 +68,10 @@ class DatabaseService extends EventEmitter {
    * @returns {Promise<void>} promise
    */
   async setup() {
+    // nuke tables when requested
+    if (process.env.DB_NUKE) {
+      await this.nuke()
+    }
     for (const key in DB_QUERIES) {
       const createTableQuery = DB_QUERIES[key]?.create_table
       if (!createTableQuery) {
@@ -83,6 +87,33 @@ class DatabaseService extends EventEmitter {
         .catch((err) => {
           console.error(`[Database] Error creating table '${key}'`)
           console.error(err)
+        })
+    }
+    this.emit('ready')
+  }
+
+  /**
+   * Nuke (drop) all tables from the database
+   * @returns {Promise<void>} promise
+   */
+  async nuke() {
+    console.info('[Database] ! Nuking tables...')
+    for (const key of Object.keys(DB_QUERIES).reverse()) {
+      const nukeTableQuery = DB_QUERIES[key]?.delete_table
+      if (!nukeTableQuery) {
+        continue
+      }
+      await this.query(nukeTableQuery)
+        .then((result) => {
+          if (result.warningStatus) {
+            return
+          }
+          console.info(`[Database - Nuke] Dropped table '${key}'`)
+        })
+        .catch((err) => {
+          console.error(
+            `[Database - Nuke] Failed to drop table '${key}' [${err.message}]`
+          )
         })
     }
   }
