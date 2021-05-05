@@ -26,7 +26,9 @@ async function init() {
   // make express listen on port defined in the environment variable 'EXPRESS_PORT'
   app.listen(process.env.PORT || process.env.EXPRESS_PORT, () =>
     console.info(
-      `[System] Running @ http://localhost:${(process.env.PORT || process.env.EXPRESS_PORT)}`
+      `[System] Running @ http://localhost:${
+        process.env.PORT || process.env.EXPRESS_PORT
+      }`
     )
   )
 }
