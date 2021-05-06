@@ -5,6 +5,10 @@
       "name": "Telia",
       "logo": "https://i.imgur.com/htVMAVi.png"
     },
+    "location": {
+      "city": "Helsinki",
+      "country": "Finland"
+    },
     "position": "Full-Stack Web Developer",
     "matched_at": 1620336541000
   },
@@ -13,6 +17,10 @@
     "employer": {
       "name": "Tesla Motors",
       "logo": "https://i.imgur.com/TRYYEEN.png"
+    },
+    "location": {
+      "city": "Tampere",
+      "country": "Finland"
     },
     "position": "Data Scientist",
     "matched_at": 1620315541000

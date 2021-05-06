@@ -14,6 +14,9 @@
     "ReactJS",
     "SQL"
   ],
-  "city": "Helsinki",
+  "location": {
+    "city": "Helsinki",
+    "country": "Finland"
+  },
   "bio": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Officiis quos consectetur repudiandae necessitatibus perspiciatis voluptatem omnis quasi facilis iste obcaecati laboriosam impedit neque in aliquid atque, nesciunt quam alias officia architecto placeat, nam magni quod. Voluptates commodi nam aliquid asperiores, voluptatum officia pariatur natus illo rerum assumenda illum id, impedit perferendis. Suscipit libero nulla, animi ea velit iste qui tenetur atque repellat sint ratione nihil eveniet eos quod necessitatibus, sed rem debitis perspiciatis earum! Praesentium, temporibus a. Tempora, voluptatibus tempore! Corporis provident quasi, velit ipsa quae in molestias eveniet. Dolor, ratione eum! Voluptatum explicabo quaerat possimus optio quibusdam placeat. Illo!"
 }
