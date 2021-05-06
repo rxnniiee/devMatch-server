@@ -3,11 +3,13 @@ const express = require('express')
 const Database = require('./services/database/DatabaseService')
 const fs = require('fs/promises')
 const path = require('path')
+const cors = require('cors')
 
 // variables & setup
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
+app.use(cors())
 
 const ROUTES_DIR = './src/routes'
 
