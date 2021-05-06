@@ -2,6 +2,7 @@
 const express = require('express')
 const Database = require('./services/database/DatabaseService')
 const fs = require('fs/promises')
+const path = require('path')
 
 // variables & setup
 const app = express()
@@ -21,6 +22,9 @@ async function init() {
   // route middlewares
   const routeFiles = await fs.readdir(ROUTES_DIR)
   for (routeFile of routeFiles) {
+    if (path.extname(routeFile) !== '.js') {
+      return // not a js file
+    }
     const route = require(`./routes/${routeFile}`)
     if (!route.meta) {
       return // has no meta so we don't know which path to route it on
