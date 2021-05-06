@@ -1,15 +1,14 @@
 // modules
 const express = require('express')
 const Database = require('./services/database/DatabaseService')
+const fs = require('fs/promises')
 
 // variables & setup
 const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
-// import routes
-const helloRoute = require('./routes/hello')
-const authRoute = require('./routes/auth')
+const ROUTES_DIR = './src/routes'
 
 // the main function of this server
 // connects everything together
@@ -20,8 +19,15 @@ async function init() {
   // todo: make sure database is reachable, then set it up
 
   // route middlewares
-  app.use('/', helloRoute)
-  app.use('/auth', authRoute)
+  const routeFiles = await fs.readdir(ROUTES_DIR)
+  for (routeFile of routeFiles) {
+    const route = require(`./routes/${routeFile}`)
+    if (!route.meta) {
+      return // has no meta so we don't know which path to route it on
+    }
+    app.use(route.meta.path, route)
+    console.info(`[System] Mounted route '${route.meta.path}'`)
+  }
 
   // make express listen on port defined in the environment variable 'EXPRESS_PORT'
   app.listen(process.env.PORT || process.env.EXPRESS_PORT, () =>
