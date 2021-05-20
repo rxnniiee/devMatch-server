@@ -28,17 +28,17 @@ const login = async (login, password) => {
   console.log(`[AuthService - Login] ${login}:${hashedPassword}`)
 }
 
-const register = async (accountType, props) => {
+const register = async (account_type, props) => {
   try {
-    assert(!!accountType, 'Missing field: accountType')
+    assert(!!account_type, 'Missing field: account_type')
     assert(!!props?.login, 'Missing field: login')
     assert(!!props?.password, 'Missing field: password')
     assert(
-      Object.values(AccountType).includes(accountType),
-      'invalid accountType supplied'
+      Object.values(AccountType).includes(account_type),
+      'Invalid value in field: account_type'
     )
 
-    if (accountType == AccountType.TALENT) {
+    if (account_type == AccountType.TALENT) {
       assert(!!props?.first_name, 'Missing field: first_name')
       assert(!!props?.last_name, 'Missing field: last_name')
       assert(
@@ -78,7 +78,7 @@ const register = async (accountType, props) => {
     throw MESSAGES.CONFLICT('Email address is already in use')
   }
 
-  if (accountType == AccountType.TALENT) {
+  if (account_type == AccountType.TALENT) {
     // register talent
     const result = await Database.query(DB_QUERIES.talent.create, [
       await uidGenerator.generate(),

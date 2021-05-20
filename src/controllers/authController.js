@@ -5,9 +5,9 @@ const login = async (req, res, next) => {
 }
 
 const register = async (req, res, next) => {
-  const { accountType } = req.body
+  const { account_type } = req.body
   try {
-    await AuthService.register(accountType, req.body)
+    await AuthService.register(account_type, req.body)
     res.sendStatus(201)
     next()
   } catch (err) {
