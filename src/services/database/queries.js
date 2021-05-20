@@ -42,10 +42,10 @@ module.exports = {
     delete: `DELETE FROM city WHERE name=? LIMIT 1`,
     get_all: `SELECT * FROM city`,
   },
-  // ? Table - employee
-  employee: {
+  // ? Table - talent
+  talent: {
     create_table: dedent(
-      `CREATE TABLE IF NOT EXISTS employee (
+      `CREATE TABLE IF NOT EXISTS talent (
         id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
         uid CHAR(16) NOT NULL UNIQUE,
         email VARCHAR(320) NOT NULL,
@@ -54,11 +54,10 @@ module.exports = {
         last_name VARCHAR(64) NOT NULL,
         preferred_employment_type TINYINT(3) NOT NULL,
         city VARCHAR(64) NOT NULL,
-        created_at INT(11) UNSIGNED NOT NULL,
-        FOREIGN KEY (city) REFERENCES city(name)
+        created_at INT(11) UNSIGNED NOT NULL
       )`
     ),
-    delete_table: `DROP TABLE employee`,
+    delete_table: `DROP TABLE talent`,
     /**
      * @param uid CHAR(16) - nanoid string
      * @param email VARCHAR(320)
@@ -69,12 +68,15 @@ module.exports = {
      * @param city VARCHAR(64)
      * @param created_at INT(11) - Unix Epoch Timestamp
      */
-    create: `INSERT INTO employee (uid, email, password, first_name, last_name, preferred_employment_type, city, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+    create: `INSERT INTO talent (uid, email, password, first_name, last_name, preferred_employment_type, city, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     /**
      * @param uid CHAR(16) - nanoid string
      */
-    delete: `DELETE FROM employee WHERE uid = ? LIMIT 1`,
-    get_all: `SELECT uid, first_name, last_name, city, preferred_employment_type, created_at FROM employee`,
+    delete: `DELETE FROM talent WHERE uid = ? LIMIT 1`,
+    get_all: `SELECT uid, first_name, last_name, city, preferred_employment_type, created_at FROM talent`,
+    get_by_uid: `SELECT uid, first_name, last_name, preferred_employment_type, city, created_at FROM talent WHERE uid=? LIMIT 1`,
+    get_by_email: `SELECT uid, first_name, last_name, preferred_employment_type, city, created_at FROM talent WHERE email=? LIMIT 1`,
+    exists: `SELECT uid FROM talent WHERE email=? LIMIT 1`,
   },
   // ? table - employer
   employer: {
@@ -90,12 +92,26 @@ module.exports = {
       )`
     ),
     delete_table: `DROP TABLE employer`,
+    /**
+     * @param uid CHAR(16) - nanoid string
+     * @param email VARCHAR(320)
+     * @param password CHAR(60) - bcrypt hashed string
+     * @param company_name VARCHAR(64)
+     * @param company_logo_path VARCHAR(128)
+     * @param created_at INT(11) - Unix Epoch Timestamp
+     */
+    create: `INSERT INTO employer (uid, email, password, company_name, company_logo_path, created_at) VALUES (?, ?, ?, ?, ?, ?)`,
+    get_all: `SELECT uid, company_name, company_logo_path,  created_at FROM employer`,
+    get_by_uid: `SELECT uid, company_name, company_logo_path, created_at FROM employer WHERE uid=? LIMIT 1`,
+    get_by_email: `SELECT uid, company_name, company_logo_path, created_at FROM employer WHERE email=? LIMIT 1`,
+    exists: `SELECT uid FROM employer WHERE email=? LIMIT 1`,
   },
   // ? table - job listing
   job_listing: {
     create_table: dedent(
       `CREATE TABLE IF NOT EXISTS job_listing (
         id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        uid CHAR(16) NOT NULL UNIQUE,
         employer CHAR(16) NOT NULL,
         title VARCHAR(64) NOT NULL,
         body TEXT NOT NULL,
@@ -121,9 +137,9 @@ module.exports = {
     create_table: dedent(
       `CREATE TABLE IF NOT EXISTS job_listing_technology (
         id INT(11) UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
-        job_listing INT(11) UNSIGNED NOT NULL,
+        job_listing CHAR(16) NOT NULL,
         technology VARCHAR(64) NOT NULL,
-        FOREIGN KEY (job_listing) REFERENCES job_listing(id),
+        FOREIGN KEY (job_listing) REFERENCES job_listing(uid),
         FOREIGN KEY (technology) REFERENCES technology(name)
       )`
     ),
