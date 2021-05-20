@@ -4,7 +4,7 @@ const EventEmitter = require('events')
 const DB_QUERIES = require('./queries')
 
 class DatabaseService extends EventEmitter {
-  connection = null
+  pool = null
 
   constructor() {
     super()
@@ -26,19 +26,14 @@ class DatabaseService extends EventEmitter {
    * @returns {Promise<void>}
    */
   async connect() {
-    if (this.connection) {
-      return // we already have a connection, don't bother
+    if (this.pool) {
+      return // we already have a pool, don't bother
     }
-    await mysql
-      .createConnection(this.config)
-      .then(async (connection) => {
-        this.connection = connection
-        this.emit('connected')
-      })
-      .catch((err) => {
-        // console.error(err)
-        this.emit('error', err)
-      })
+    this.pool = await mysql.createPool(this.config)
+
+    await this.query('SELECT 1').catch((err) => this.emit('error', err))
+
+    this.emit('connected')
   }
 
   /**
@@ -48,19 +43,19 @@ class DatabaseService extends EventEmitter {
    * @returns {Promise<Array>} result
    */
   async query(query, parameters) {
-    const [result] = await this.connection.query(query, parameters)
+    const [result] = await this.pool.query(query, parameters)
     return result
   }
 
   /**
-   * Destroys the connection
+   * Destroys the pool
    * @returns {Promise<void>} promise
    */
   async destroy() {
-    if (!this.connection) {
+    if (!this.pool) {
       return
     }
-    await this.connection.destroy()
+    await this.pool.end()
   }
 
   /**
