@@ -76,6 +76,7 @@ module.exports = {
     get_all: `SELECT uid, first_name, last_name, city, preferred_employment_type, created_at FROM talent`,
     get_by_uid: `SELECT uid, first_name, last_name, preferred_employment_type, city, created_at FROM talent WHERE uid=? LIMIT 1`,
     get_by_email: `SELECT uid, first_name, last_name, preferred_employment_type, city, created_at FROM talent WHERE email=? LIMIT 1`,
+    get_by_email_with_password: `SELECT * FROM talent where email=? LIMIT 1`,
     exists: `SELECT uid FROM talent WHERE email=? LIMIT 1`,
   },
   // ? table - employer
@@ -104,6 +105,7 @@ module.exports = {
     get_all: `SELECT uid, company_name, company_logo_path,  created_at FROM employer`,
     get_by_uid: `SELECT uid, company_name, company_logo_path, created_at FROM employer WHERE uid=? LIMIT 1`,
     get_by_email: `SELECT uid, company_name, company_logo_path, created_at FROM employer WHERE email=? LIMIT 1`,
+    get_by_email_with_password: `SELECT * FROM employer where email=? LIMIT 1`,
     exists: `SELECT uid FROM employer WHERE email=? LIMIT 1`,
   },
   // ? table - job listing

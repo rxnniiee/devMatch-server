@@ -7,6 +7,7 @@ const ObjectSearcher = require('../../utils/ObjectSearcher')
 const uidGenerator = require('../../utils/uidGenerator')
 const DB_QUERIES = require('../database/queries')
 const { CODES, MESSAGES } = require('../../common/ErrorCodes')
+const jwt = require('jsonwebtoken')
 
 // hash iterations 2^10
 const BCRYPT_COST = 10
@@ -20,12 +21,57 @@ const validatePasswordHash = async (password, hash) => {
 }
 
 const login = async (login, password) => {
-  assert(!!login, 'login can not be null')
-  assert(!!password, 'password can not be null')
+  try {
+    assert(!!login, 'Missing field: login')
+    assert(!!password, 'Missing field: password')
+  } catch (err) {
+    throw MESSAGES.BAD_REQUEST(err.message)
+  }
 
-  const hashedPassword = await getPasswordHash(password)
+  const TALENT = await Database.query(
+    DB_QUERIES.talent.get_by_email_with_password,
+    [login]
+  )
+  const EMPLOYER = await Database.query(
+    DB_QUERIES.employer.get_by_email_with_password,
+    [login]
+  )
 
-  console.log(`[AuthService - Login] ${login}:${hashedPassword}`)
+  const USER = TALENT.length === 1 ? TALENT[0] : EMPLOYER[0]
+
+  if (!USER) {
+    await getPasswordHash(password) // dummy workload to make the request take longer
+    throw MESSAGES.FORBIDDEN('Invalid login credentials')
+  }
+
+  USER.account_type = TALENT.length === 1 ? 'talent' : 'employer'
+
+  const passwordMatches = await bcrypt.compare(password, USER.password)
+
+  // console.log(USER)
+
+  if (!passwordMatches) {
+    throw MESSAGES.FORBIDDEN('Invalid login credentials')
+  }
+
+  const TOKEN = jwt.sign(
+    {
+      uid: USER.uid,
+      account_type: USER.account_type,
+    },
+    process.env.JWT_SECRET,
+    {
+      expiresIn: '1day',
+    }
+  )
+
+  return JSON.stringify({
+    token: TOKEN,
+  })
+
+  // const hashedPassword = await getPasswordHash(password)
+
+  // console.log(`[AuthService - Login] ${login}:${hashedPassword}`)
 }
 
 const register = async (account_type, props) => {
