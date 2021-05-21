@@ -13,6 +13,7 @@ const login = async (req, res, next) => {
       return next()
     }
     res.sendStatus(400)
+    console.error(err)
     next()
   }
 }
